@@ -254,8 +254,7 @@ int logicalNeg(int x) {
     // x > 0 -> -x flag = 1
     int a = (x >> 31) & 1;
     int b = ((~x + 1) >> 31) & 1;
-//    printf("x = %d !x = %d \n", x, 1 - (a | b));
-    return  1 - (a | b);
+    return 1 - (a | b);
 }
 
 /* howManyBits - return the minimum number of bits required to represent x in
@@ -271,7 +270,22 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-    return 0;
+    // if x < 0 -> x = x ^ (x >> 31)
+    // 有点难以理解
+    // 当x>0取决于第一个1在哪里，当x<0取决于第一个0在哪里
+
+    x = x ^ (x >> 31);
+    int b1 = !!(x >> 16) << 4;
+    x >>= b1;
+    int b2 = !!(x >> 8) << 3;
+    x >>= b2;
+    int b3 = !!(x >> 4) << 2;
+    x >>= b3;
+    int b4 = !!(x >> 2) << 1;
+    x >>= b4;
+    int b5 = !!(x >> 1);
+    x >>= b5;
+    return b1 + b2 + b3 + b4 + b5 + x + 1;
 }
 //float
 /* 
@@ -286,7 +300,15 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-    return 2;
+    // 首先将指数、底数、符号位从uf拆出来
+    unsigned flag = uf & (1 << 31);
+    unsigned exp = (uf & 0x7f800000) >> 23;
+    unsigned base = uf & 0x007fffff;
+    if (exp == 0) return uf << 1 | flag;
+    if (exp == 255) return uf;
+    exp++;
+    if (exp == 255) return 0x7f800000 | flag;
+    return (exp << 23) + base + flag;
 }
 
 /*
@@ -302,6 +324,24 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
+    int inf = 0x80000000;
+    // 同样分解，但这次是真实指数
+    int flag = uf >> 31;
+    int exp = ((uf & 0x7f800000) >> 23) - 127;
+    int base = (uf & 0x007fffff) | 0x00800000;
+    if (exp > 31) return inf;
+    if (exp < 0) return 0;
+
+    if (exp > 23) base <<= (exp - 23);
+    else base >>= (23 - exp);
+
+    // 符号相同则直接返回
+    if (!(flag ^ (base >> 31))) return base;
+    // 当前符号为负，原来为正，超出范围
+    else if (base >> 31) return inf;
+    // 原来为负，现在为正, 取相反数
+    else return ~base + 1;
+
     return 2;
 }
 
@@ -319,5 +359,8 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
+    unsigned inf = 0x7f800000;
+
+    // 初始为x*2^0->0-127-x
     return 2;
 }
