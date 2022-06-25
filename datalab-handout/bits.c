@@ -362,5 +362,8 @@ unsigned floatPower2(int x) {
     unsigned inf = 0x7f800000;
 
     // 初始为x*2^0->0-127-x
-    return 2;
+    int exp = x + 127;
+    if (exp >= 255) return inf;
+    if (exp <= 0) return 0;
+    return exp << 23;
 }
