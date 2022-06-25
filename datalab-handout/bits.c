@@ -236,7 +236,9 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-    return 2;
+    // 同号则相减看是否为负值； 异号则x小于0则结果为正
+    int a = ~((x >> 31) ^ (y >> 31));
+    return (a & !((y + ~x + 1) >> 31)) | ((!a) & (x >> 31));
 }
 //4
 /* 
@@ -248,7 +250,12 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-    return 2;
+    // x < 0 -> flag = 1
+    // x > 0 -> -x flag = 1
+    int a = (x >> 31) & 1;
+    int b = ((~x + 1) >> 31) & 1;
+//    printf("x = %d !x = %d \n", x, 1 - (a | b));
+    return  1 - (a | b);
 }
 
 /* howManyBits - return the minimum number of bits required to represent x in
