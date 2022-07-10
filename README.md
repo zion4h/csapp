@@ -6,3 +6,7 @@
 
 ## lab3 attack
 [Understanding Buffer Overflow Bugs](/target1/README.md)
+
+## lab5 cache
+[Understanding Cache Memories](/cachelab-handout/README.md)
+
