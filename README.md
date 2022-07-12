@@ -10,3 +10,5 @@
 ## lab5 cache
 [Understanding Cache Memories](/cachelab-handout/README.md)
 
+## lab6 shell
+[Writing Your Own Unix Shell](/shlab-handout/README.md)
