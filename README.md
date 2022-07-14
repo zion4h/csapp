@@ -12,3 +12,6 @@
 
 ## lab6 shell
 [Writing Your Own Unix Shell](/shlab-handout/README.md)
+
+## lab7 malloc
+[Writing a Dynamic Storage Allocator](/malloclab-handout/README.md)
